@@ -4,8 +4,9 @@ import heapq
 import random
 
 class Graph:
-    def __init__(self):
+    def __init__(self, mode):
         self.graph = {}
+        self.mode = mode
 
     def add_edge(self, node1, node2, weight):
         if node1 not in self.graph:
@@ -14,7 +15,7 @@ class Graph:
 
         if node2 not in self.graph:
             self.graph[node2] = []
-        self.graph[node2].append((node1, weight))  # Assuming an undirected graph
+        self.graph[node2].append((node1, weight))
 
     def dijkstra(self, source):
         distances = {node: float('inf') for node in self.graph}
@@ -38,6 +39,25 @@ class Graph:
 
         return distances
 
+    def bellman_ford(self, source):
+        distances = {node: float('inf') for node in self.graph}
+        distances[source] = 0
+
+        for _ in range(len(self.graph) - 1):
+            for node in self.graph:
+                for neighbor, weight in self.graph[node]:
+                    if distances[node] + weight < distances[neighbor]:
+                        distances[neighbor] = distances[node] + weight
+
+        for node in self.graph:
+            for neighbor, weight in self.graph[node]:
+                if distances[node] + weight < distances[neighbor]:
+                    print("Graph contains a negative cycle")
+                    return {}
+
+        return distances
+
+
     def generate_random_graph(self, num_nodes, num_edges):
         for i in range(1, num_nodes + 1):
             self.graph[i] = []
@@ -52,9 +72,10 @@ class Graph:
         for edge in edges[:num_edges]:
             self.add_edge(edge[0], edge[1], weight=1)
     def find_shortest_path(self, source, target):
-        shortest_distances = self.dijkstra(source)
-
-        # Backtrack to reconstruct the shortest path
+        if self.mode == 1:
+            shortest_distances = self.dijkstra(source)
+        elif self.mode == 2:
+            shortest_distances = self.dijkstra(source)
         shortest_path = []
         current_node = target
         while current_node != source:
@@ -66,6 +87,7 @@ class Graph:
         shortest_path.append(source)
         shortest_path.reverse()
         return shortest_path, shortest_distances
+
     def draw_graph(self, source, target):
         G = nx.Graph()
         shortest_path, _ = self.find_shortest_path(source, target)
