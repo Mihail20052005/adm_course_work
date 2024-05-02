@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import heapq
 import random
 
+
 class Graph:
     def __init__(self, mode):
         self.graph = {}
@@ -57,7 +58,6 @@ class Graph:
 
         return distances
 
-
     def generate_random_graph(self, num_nodes, num_edges):
         for i in range(1, num_nodes + 1):
             self.graph[i] = []
@@ -71,6 +71,7 @@ class Graph:
 
         for edge in edges[:num_edges]:
             self.add_edge(edge[0], edge[1], weight=1)
+
     def find_shortest_path(self, source, target):
         if self.mode == 1:
             shortest_distances = self.dijkstra(source)
@@ -95,8 +96,10 @@ class Graph:
             for neighbor, weight in neighbors:
                 G.add_edge(node, neighbor, weight=weight)
 
-        pos = nx.spring_layout(G)  # positions for all nodes
+        pos = nx.spring_layout(G)
+        edge_labels = nx.get_edge_attributes(G, 'weight')
         nx.draw(G, pos, with_labels=True, node_color='skyblue', node_size=800, font_size=12)
+        nx.draw_networkx_edge_labels(self.graph, pos, edge_labels=edge_labels)
         nx.draw_networkx_nodes(self.graph, pos, nodelist=shortest_path, node_color='red', node_size=800)
         plt.title("Graph Visualization")
         plt.show()
@@ -107,6 +110,3 @@ class Graph:
         print("Shortest distances from node", source, ":")
         for node, distance in shortest_distances.items():
             print("Node:", node, "- Distance:", distance)
-
-
-
