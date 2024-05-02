@@ -2,6 +2,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import heapq
 import random
+import os
 
 
 class Graph:
@@ -89,7 +90,7 @@ class Graph:
         shortest_path.reverse()
         return shortest_path, shortest_distances
 
-    def draw_graph(self, source, target):
+    def save_graph(self, source, target):
         G = nx.Graph()
         shortest_path, _ = self.find_shortest_path(source, target)
         for node, neighbors in self.graph.items():
@@ -97,12 +98,14 @@ class Graph:
                 G.add_edge(node, neighbor, weight=weight)
 
         pos = nx.spring_layout(G)
-        edge_labels = nx.get_edge_attributes(G, 'weight')
         nx.draw(G, pos, with_labels=True, node_color='skyblue', node_size=800, font_size=12)
-        nx.draw_networkx_edge_labels(self.graph, pos, edge_labels=edge_labels)
         nx.draw_networkx_nodes(self.graph, pos, nodelist=shortest_path, node_color='red', node_size=800)
+        if os.path.isfile("res/graph_image.png"):
+            os.remove("res/graph_image.png")
         plt.title("Graph Visualization")
-        plt.show()
+        plt.tight_layout()
+        plt.savefig("res/graph_image.png", dpi=100)
+
 
     def print_shortest_path(self, source, target):
         shortest_path, shortest_distances = self.find_shortest_path(source, target)
