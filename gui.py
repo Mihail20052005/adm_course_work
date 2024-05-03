@@ -116,7 +116,7 @@ class SecondWindow(QDialog):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Create graph")
-        self.setGeometry(200, 200, 1000, 600)
+        self.setGeometry(200, 200, 1000, 800)
         self.graph = Graph(mode=1)
         self.source_node = 0
         self.target_node = 0
@@ -140,7 +140,8 @@ class SecondWindow(QDialog):
         self.text_output.setGeometry(350, 50, 300, 500)
         layout = QVBoxLayout()
 
-
+        self.graph_image_label = QLabel(self)
+        self.graph_image_label.setGeometry(700, 50, 300, 500)
         add_point_button = QPushButton("Add point to graph", self)
         add_point_button.setGeometry(50, 250, 200, 30)
         add_point_button.clicked.connect(self.add_point_to_graph)
@@ -157,7 +158,6 @@ class SecondWindow(QDialog):
         self.point_input_source.setFocus()
 
     def generate_graph(self):
-
         self.source_node = int(self.input_source.text())
         self.target_node = int(self.input_target.text())
         shortest_path, shortest_distances = self.graph.find_shortest_path(self.source_node, self.target_node)
@@ -166,3 +166,9 @@ class SecondWindow(QDialog):
         self.text_output.append("Shortest distances from node {}:".format(self.source_node))
         for node, distance in shortest_distances.items():
             self.text_output.append("Node: {} - Distance: {}".format(node, distance))
+
+        self.graph.save_graph(self.source_node, self.target_node)
+        pixmap = QPixmap("res/graph_image.png")
+        pixmap_resized = pixmap.scaled(300, 300)
+        self.graph_image_label.setPixmap(pixmap_resized)
+
