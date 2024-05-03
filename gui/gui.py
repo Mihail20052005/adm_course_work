@@ -1,11 +1,13 @@
-import os
 import sys
 import networkx as nx
 import matplotlib.pyplot as plt
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QPushButton, QComboBox, QLineEdit, QTextEdit, QDialog, \
     QVBoxLayout
 from PyQt5.QtGui import QPixmap
-from graph import Graph
+
+from graph.graph_structure import Graph
+from graph.graph_algo import *
+
 
 
 class MainWindow(QMainWindow):
@@ -15,9 +17,8 @@ class MainWindow(QMainWindow):
         self.setGeometry(100, 100, 1000, 600)
 
         self.graph = None
-
+        global mode_
         self.second_window = None
-
         self.label_mode = QLabel("Mode:", self)
         self.label_mode.setGeometry(50, 50, 100, 30)
         self.combo_mode = QComboBox(self)
@@ -81,6 +82,8 @@ class MainWindow(QMainWindow):
             return
 
         self.graph = Graph(self.combo_mode.currentData())
+
+        mode_ = self.combo_mode.currentData()
         self.graph.generate_random_graph(num_nodes, num_edges)
         self.text_output.clear()
         self.text_output.append("Random graph generated.")
@@ -93,7 +96,8 @@ class MainWindow(QMainWindow):
             return
         source = int(self.input_source.text())
         target = int(self.input_target.text())
-        shortest_path, shortest_distances = self.graph.find_shortest_path(source, target)
+        graph__ = self.graph.graph_()
+        shortest_path, shortest_distances = find_shortest_path(graph__, 1, source, target)
         print(source, target)
         self.text_output.clear()
         self.text_output.append(f"Shortest path from node {source} to node {target}: {shortest_path}")
@@ -103,7 +107,7 @@ class MainWindow(QMainWindow):
 
     def draw_graph(self, source, target):
         self.graph.save_graph(source, target)
-        pixmap = QPixmap("res/graph_image.png")
+        pixmap = QPixmap("res/graph_image_new.png")
         pixmap_resized = pixmap.scaled(300, 300)
         self.graph_image_label.setPixmap(pixmap_resized)
 
@@ -117,7 +121,7 @@ class SecondWindow(QDialog):
         super().__init__()
         self.setWindowTitle("Create graph")
         self.setGeometry(200, 200, 1000, 800)
-        self.graph = Graph(mode=1)
+        self.graph = Graph(1)
         self.source_node = 0
         self.target_node = 0
 
@@ -160,15 +164,17 @@ class SecondWindow(QDialog):
     def generate_graph(self):
         self.source_node = int(self.input_source.text())
         self.target_node = int(self.input_target.text())
-        shortest_path, shortest_distances = self.graph.find_shortest_path(self.source_node, self.target_node)
+        shortest_path, shortest_distances = find_shortest_path(self.graph.graph_(), 1, self.source_node, self.target_node)
         self.text_output.clear()
         self.text_output.append(f"Shortest path from node {self.source_node} to node {self.target_node}: {shortest_path}")
         self.text_output.append("Shortest distances from node {}:".format(self.source_node))
         for node, distance in shortest_distances.items():
             self.text_output.append("Node: {} - Distance: {}".format(node, distance))
 
+
+        
         self.graph.save_graph(self.source_node, self.target_node)
-        pixmap = QPixmap("res/graph_image.png")
+        pixmap = QPixmap("res/graph_image_new.png")
         pixmap_resized = pixmap.scaled(300, 300)
         self.graph_image_label.setPixmap(pixmap_resized)
 
