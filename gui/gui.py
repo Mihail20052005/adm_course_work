@@ -9,7 +9,6 @@ from graph.graph_structure import Graph
 from graph.graph_algo import *
 
 
-
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -164,15 +163,15 @@ class SecondWindow(QDialog):
     def generate_graph(self):
         self.source_node = int(self.input_source.text())
         self.target_node = int(self.input_target.text())
-        shortest_path, shortest_distances = find_shortest_path(self.graph.graph_(), 1, self.source_node, self.target_node)
+        shortest_path, shortest_distances = find_shortest_path(self.graph.graph_(), 1, self.source_node,
+                                                               self.target_node)
         self.text_output.clear()
-        self.text_output.append(f"Shortest path from node {self.source_node} to node {self.target_node}: {shortest_path}")
+        self.text_output.append(
+            f"Shortest path from node {self.source_node} to node {self.target_node}: {shortest_path}")
         self.text_output.append("Shortest distances from node {}:".format(self.source_node))
         for node, distance in shortest_distances.items():
             self.text_output.append("Node: {} - Distance: {}".format(node, distance))
 
-
-        
         self.graph.save_graph(self.source_node, self.target_node)
         pixmap = QPixmap("res/graph_image_new.png")
         pixmap_resized = pixmap.scaled(300, 300)
